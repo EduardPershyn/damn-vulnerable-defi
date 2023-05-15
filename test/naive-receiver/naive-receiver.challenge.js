@@ -37,7 +37,7 @@ describe('[Challenge] Naive receiver', function () {
     });
 
     it('Execution', async function () {
-        /** CODE YOUR SOLUTION HERE */
+        await (await ethers.getContractFactory('Solution3', player)).deploy(pool.address, receiver.address);
     });
 
     after(async function () {
